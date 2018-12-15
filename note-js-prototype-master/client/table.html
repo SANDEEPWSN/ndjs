@@ -1,0 +1,79 @@
+<html>
+<head>
+
+		
+    
+
+
+
+
+<link rel="stylesheet" href="../css/datatables.css"/>
+	<!-- jQuery 3 -->
+<script src="../js/jquery.min.js"></script>
+<script  src="../js/datatables.js"></script>
+</head>
+<body>
+<table id="example" class="display" width="100%"></table>
+
+<table id="example1" class="display" width="100%"></table>
+<br><br>
+
+
+<form class="modal-content animate" action="/api/login" method="POST">
+    
+    <div class="container">
+     
+      <button type="submit">Login</button>
+     
+    </div>
+
+    
+  </form>
+</body>
+<script type="text/javascript">
+	
+ 
+function getTableDataFromService(apiUrl,tableElementID) {
+	$.ajax({
+           url : apiUrl,
+           type: 'GET',
+           success : function(data){
+	           	var res = frameTableData(data);
+	            var resulttable =  $('#' + tableElementID).DataTable({
+	        	data: res.tableBodyPart,
+	        	columns: res.tableHeaderPart
+	    		});
+           },
+           failure : function(data){
+           		console.log("error");
+           }
+       });
+	// body...
+}
+
+function frameTableData(responseData){
+     var ResultList = {};
+       var temparray=[] // for pushing columns and rows
+       $.each(Object.keys(responseData.data[0]),function(index,row){
+       		var newcolumn ={};
+       		newcolumn.title = row.toString().toUpperCase();
+            temparray.push(newcolumn);
+        })       
+       	ResultList.tableHeaderPart = temparray;
+	    temparray = []
+        $.each(responseData.data,function(index,row){
+       		var newrow = Object.values(row)
+            temparray.push(newrow);
+        })        
+		ResultList.tableBodyPart = temparray;
+	return ResultList;
+}
+
+$(document).ready(function() {
+getTableDataFromService('https://reqres.in/api/users','example')
+// getTableDataFromService('https://reqres.in/api/users','example1')
+
+   
+} );
+</script>
+</html>
